@@ -10,7 +10,20 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-        <ContentControl x:Name="MainRegionContainer" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <ContentControl
+            x:Name="FolderListContainer" 
+            Grid.Column="0"
+        />
+        
+        <ContentControl 
+            x:Name="MessageListContainer" 
+            Grid.Column="1"
+        />
 
     </Grid>
     

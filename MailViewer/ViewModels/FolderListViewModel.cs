@@ -11,9 +11,10 @@ using Robot1que.MailViewer.Models;
 
 namespace Robot1que.MailViewer.ViewModels
 {
-    public class FolderTreeViewModel: INotifyPropertyChanged
+    public class FolderListViewModel: INotifyPropertyChanged
     {
         private readonly IAuthenticationService _authenticationService;
+        private readonly INavigationService _navigationService;
 
         private ImmutableArray<MailFolder> _mailFolders = ImmutableArray<MailFolder>.Empty;
 
@@ -35,10 +36,15 @@ namespace Robot1que.MailViewer.ViewModels
             }
         }
 
-        public FolderTreeViewModel(IAuthenticationService authenticationService)
+        public FolderListViewModel(
+            IAuthenticationService authenticationService, 
+            INavigationService navigationService)
         {
             this._authenticationService = 
                 authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+
+            this._navigationService =
+                navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         }
 
         public async Task Initialize()
@@ -56,6 +62,16 @@ namespace Robot1que.MailViewer.ViewModels
             }
 
             this.MailFolders = dataItems.Select(item => MailFolder.FromData(item)).ToImmutableArray();
+        }
+
+        public void MailFolderSelect(string id)
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            this._navigationService.MailFolderOpen(id);
         }
     }
 }

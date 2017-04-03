@@ -22,32 +22,32 @@ using System.ComponentModel;
 
 namespace Robot1que.MailViewer.Views
 {
-    using MailFolderItem = TreeViewItem<MailFolder>;
+    using TreeViewItemData = TreeViewItemData<MailFolder>;
 
-    public sealed partial class FolderTreeView : UserControl
+    public sealed partial class FolderListView : UserControl
     {
         public static readonly DependencyProperty ItemsSourceProperty;
 
-        private readonly FolderTreeViewModel _viewModel;
+        private readonly FolderListViewModel _viewModel;
 
-        public ImmutableArray<MailFolderItem> ItemsSource
+        public ImmutableArray<TreeViewItemData> ItemsSource
         {
-            get => (ImmutableArray<MailFolderItem>)this.GetValue(FolderTreeView.ItemsSourceProperty);
-            set => this.SetValue(FolderTreeView.ItemsSourceProperty, value);
+            get => (ImmutableArray<TreeViewItemData>)this.GetValue(FolderListView.ItemsSourceProperty);
+            set => this.SetValue(FolderListView.ItemsSourceProperty, value);
         }
 
-        static FolderTreeView()
+        static FolderListView()
         {
-            FolderTreeView.ItemsSourceProperty =
+            FolderListView.ItemsSourceProperty =
                 DependencyProperty.Register(
-                    nameof(FolderTreeView.ItemsSource),
-                    typeof(ImmutableArray<MailFolderItem>),
-                    typeof(FolderTreeView),
-                    new PropertyMetadata(ImmutableArray<MailFolderItem>.Empty)
+                    nameof(FolderListView.ItemsSource),
+                    typeof(ImmutableArray<TreeViewItemData>),
+                    typeof(FolderListView),
+                    new PropertyMetadata(ImmutableArray<TreeViewItemData>.Empty)
                 );
         }
 
-        public FolderTreeView(FolderTreeViewModel viewModel)
+        public FolderListView(FolderListViewModel viewModel)
         {
             this._viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
@@ -59,13 +59,13 @@ namespace Robot1que.MailViewer.Views
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(FolderTreeViewModel.MailFolders))
+            if (e.PropertyName == nameof(FolderListViewModel.MailFolders))
             {
-                var viewModel = (FolderTreeViewModel)sender;
+                var viewModel = (FolderListViewModel)sender;
                 this.ItemsSource = 
                     viewModel.MailFolders
-                        .Select(item => new MailFolderItem(item, (x) => x.ChildFolders))
-                        .SelectMany(item => new MailFolderItem[] { item }.Concat(item.Children))
+                        .Select(item => new TreeViewItemData(item, (x) => x.ChildFolders))
+                        .SelectMany(item => new TreeViewItemData[] { item }.Concat(item.Children))
                         .ToImmutableArray();
             }
         }
@@ -73,6 +73,13 @@ namespace Robot1que.MailViewer.Views
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await this._viewModel.Initialize();
+        }
+
+        private void MailFolderTree_SelectedItemChanged(object sender, EventArgs e)
+        {
+            var mailFolderTree = (MailFolderTree)sender;
+            var treeViewItemData = (TreeViewItemData)mailFolderTree.SelectedItem.DataContext;
+            this._viewModel.MailFolderSelect(treeViewItemData.Data.Id);
         }
     }
 }

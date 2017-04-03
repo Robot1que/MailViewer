@@ -42,22 +42,15 @@ namespace Robot1que.MailViewer
 
             unityContainer.RegisterTypeAsSingleton<ISettings, Settings>();
             unityContainer.RegisterTypeAsSingleton<IAuthenticationService, AuthenticationService>();
+            unityContainer.RegisterTypeAsSingleton<INavigationService, NavigationService>();
 
             return unityContainer;
         }
 
         private void Navigate()
         {
-            this.MainRegionContainer.Content = this._unityContainer.Resolve<Views.FolderTreeView>();
-
-            //if (this._settings.IsSignedIn == false)
-            //{
-
-            //}
-            //else
-            //{
-
-            //}
+            this.FolderListContainer.Content = this._unityContainer.Resolve<Views.FolderListView>();
+            this.MessageListContainer.Content = this._unityContainer.Resolve<Views.MessageListView>();
         }
     }
 }
