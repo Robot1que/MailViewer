@@ -12,7 +12,7 @@ namespace Robot1que.MailViewer.Models
 
         public EmailAddress Sender { get; private set; }
 
-        public DateTimeOffset? ReceivedDateTime { set; private get; }
+        public DateTimeOffset? ReceivedDateTime { get; private set; }
 
         public string Subject { get; private set; }
 
