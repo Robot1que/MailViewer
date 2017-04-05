@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.ComponentModel;
 
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -15,47 +16,55 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 using Robot1que.MailViewer.ViewModels;
+using Robot1que.MailViewer.Models;
 
 namespace Robot1que.MailViewer.Views
 {
     public sealed partial class MessageContentView : UserControl
     {
+        private readonly MessageContentViewModel _viewModel;
+
         public MessageContentView(MessageContentViewModel viewModel)
         {
-            this.DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            this._viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
+            this.DataContext = this._viewModel;
             this.InitializeComponent();
-        }
-    }
 
-    public class MessageBodyTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate HtmlTemplate { get; set; }
-
-        public DataTemplate TextTemplate { get; set; }
-
-        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
-        {
-            return this.SelectTemplateCore(item);
+            this._viewModel.PropertyChanged += this.ViewModel_PropertyChanged;
         }
 
-        protected override DataTemplate SelectTemplateCore(object item)
+        private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var dataTemplate = new DataTemplate();
-
-            if (item is Models.MessageBody messageBody)
+            if (e.PropertyName == nameof(MessageContentViewModel.MessageBody))
             {
-                dataTemplate =
-                    messageBody.ContentType == Models.ContentType.Html ?
-                        this.HtmlTemplate :
-                        this.TextTemplate;
+                var viewModel = (MessageContentViewModel)sender;
+
+                VisualStateManager.GoToState(this, this.WithoutContentState.Name, true);
+                if (viewModel.MessageBody != null)
+                {
+                    this.ConentLoad(viewModel.MessageBody);
+                }
+            }
+        }
+
+        private void ConentLoad(MessageBody messageBody)
+        {
+            if (messageBody.ContentType == ContentType.Text)
+            {
+                VisualStateManager.GoToState(this, this.WithContentState.Name, true);
             }
             else
             {
-                dataTemplate = base.SelectTemplateCore(item);
+                this.WebView.NavigationCompleted += this.WebView_NavigationCompleted;
+                this.WebView.NavigateToString(messageBody.Content);
             }
+        }
 
-            return dataTemplate;
+        private void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        {
+            this.WebView.NavigationCompleted -= this.WebView_NavigationCompleted;
+            VisualStateManager.GoToState(this, this.WithContentState.Name, true);
         }
     }
 }

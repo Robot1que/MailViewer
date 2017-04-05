@@ -77,11 +77,17 @@
             VerticalScrollBarVisibility="Auto"
             HorizontalScrollBarVisibility="Disabled"
         >
-        
+
             <ItemsControl 
                 ItemsSource="{Binding Path=Messages, Mode=OneTime}" 
                 ItemTemplate="{StaticResource MessageItemTemplate}"
-            />
+            >
+                <ItemsControl.ItemContainerTransitions>
+                    <TransitionCollection>
+                        <ContentThemeTransition />
+                    </TransitionCollection>
+                </ItemsControl.ItemContainerTransitions>
+            </ItemsControl>
 
         </ScrollViewer>
 

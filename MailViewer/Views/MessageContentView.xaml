@@ -3,7 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Robot1que.MailViewer.Views"
-    xmlns:ext="using:Robot1que.MailViewer.Extensions"
+    xmlns:converters="using:Robot1que.MailViewer.Converters"
+    xmlns:models="using:Robot1que.MailViewer.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -14,29 +15,100 @@
     <UserControl.Resources>
         <ResourceDictionary>
 
-            <DataTemplate x:Key="HtmlContentTemplate">
-                <WebView ext:WebView.Html="{Binding Path=Content, Mode=OneTime}" />
-            </DataTemplate>
-
-            <DataTemplate x:Key="TextContentTemplate">
-                <TextBlock Text="{Binding Path=Content, Mode=OneTime}"/>
-            </DataTemplate>
-
-            <local:MessageBodyTemplateSelector
-                x:Key="MessageContentTemplateSelector"
-                HtmlTemplate="{StaticResource HtmlContentTemplate}"
-                TextTemplate="{StaticResource TextContentTemplate}"
-            />
+            <models:ContentType x:Key="HtmlContentType">Html</models:ContentType>
+            <models:ContentType x:Key="TextContentType">Text</models:ContentType>
+            <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
 
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid x:Name="RootPanel">
 
-        <ContentControl 
-            Content="{Binding Path=MessageBody, Mode=OneWay}"
-            ContentTemplateSelector="{StaticResource MessageContentTemplateSelector}"
-        />
+        <VisualStateManager.VisualStateGroups>
+            
+            <VisualStateGroup x:Name="ContentEntranceStates">
+
+                <VisualState x:Name="WithoutContentState">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="RootPanel"
+                            Storyboard.TargetProperty="Opacity"
+                            Duration="0"
+                            To="0"
+                        />
+                    </Storyboard>
+                </VisualState>
+
+                <VisualState x:Name="WithContentState">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="RootPanel"
+                            Storyboard.TargetProperty="Opacity"
+                            Duration="0:0:0.2"
+                            From="0"
+                            To="1"
+                        />
+                        <DoubleAnimation
+                            Storyboard.TargetName="RootPanelTransform"
+                            Storyboard.TargetProperty="Y"
+                            Duration="0:0:0.2"
+                            From="24"
+                            To="0"
+                        >
+                            <DoubleAnimation.EasingFunction>
+                                <CircleEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                </VisualState>
+
+            </VisualStateGroup>
+            
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="RootPanelTransform" />
+        </Grid.RenderTransform>
+
+        <Grid
+            x:Name="HtmlContentPanel"
+            Visibility="{Binding 
+                Path=MessageBody.ContentType, 
+                Mode=OneWay, 
+                Converter={StaticResource EnumToVisibilityConverter},
+                ConverterParameter={StaticResource HtmlContentType}
+            }"
+        >
+            
+            <WebView x:Name="WebView" />
+            
+        </Grid>
+
+        <Grid
+            x:Name="TextContentPanel"
+            Visibility="{Binding 
+                Path=MessageBody.ContentType, 
+                Mode=OneWay, 
+                Converter={StaticResource EnumToVisibilityConverter},
+                ConverterParameter={StaticResource TextContentType}
+            }"
+        >
+
+            <ScrollViewer
+                VerticalScrollMode="Auto"
+                HorizontalScrollMode="Auto"
+            >
+
+                <TextBlock
+                    Text="{Binding Path=MessageBody.Content, Mode=OneWay}"
+                    TextWrapping="WrapWholeWords"
+                    Padding="12,0,24,0"
+                    MinWidth="400"
+                />
+
+            </ScrollViewer>
+
+        </Grid>
 
     </Grid>
 </UserControl>

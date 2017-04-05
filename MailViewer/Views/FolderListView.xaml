@@ -34,15 +34,11 @@
                 ItemTemplate="{StaticResource MailFolderTreeItemTemplate}"
                 SelectedItemChanged="MailFolderTree_SelectedItemChanged"
             >
-                <!--<ItemsControl.ItemContainerTransitions>
+                <ItemsControl.ItemContainerTransitions>
                     <TransitionCollection>
-                        <EntranceThemeTransition 
-                            IsStaggeringEnabled="True"
-                            FromVerticalOffset="0" 
-                            FromHorizontalOffset="24"
-                        />
+                        <ContentThemeTransition />
                     </TransitionCollection>
-                </ItemsControl.ItemContainerTransitions>-->
+                </ItemsControl.ItemContainerTransitions>
             </controls:MailFolderTree>
 
         </ScrollViewer>

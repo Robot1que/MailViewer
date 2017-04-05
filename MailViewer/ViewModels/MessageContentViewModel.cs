@@ -38,6 +38,15 @@ namespace Robot1que.MailViewer.ViewModels
                 navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
             this._navigationService.MessageOpenRequested += this.NavigationService_MessageOpenRequested;
+            this._navigationService.MailFolderOpenRequested += 
+                this.NavigationService_MailFolderOpenRequested;
+        }
+
+        private void NavigationService_MailFolderOpenRequested(
+            object sender, 
+            MailFolderOpenRequestedEventArgs e)
+        {
+            this.MessageBody = null;
         }
 
         private async void NavigationService_MessageOpenRequested(

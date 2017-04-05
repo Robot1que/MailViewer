@@ -47,6 +47,8 @@ namespace Robot1que.MailViewer.ViewModels
             object sender, 
             MailFolderOpenRequestedEventArgs e)
         {
+            this.Messages.Clear();
+
             var graphService = this._authenticationService.GraphServiceGet();
             var mailFolder = await
                 graphService.Me.MailFolders[e.MailFolderId].Request()
