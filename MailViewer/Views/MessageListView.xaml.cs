@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 using Robot1que.MailViewer.ViewModels;
+using Robot1que.MailViewer.Models;
 
 namespace Robot1que.MailViewer.Views
 {
@@ -22,12 +23,7 @@ namespace Robot1que.MailViewer.Views
     {
         public MessageListView(MessageListViewModel viewModel)
         {
-            if (viewModel == null)
-            {
-                throw new ArgumentNullException(nameof(viewModel));
-            }
-
-            this.DataContext = viewModel;
+            this.DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
             this.InitializeComponent();
         }
     }

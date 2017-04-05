@@ -11,8 +11,9 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
 
         <ContentControl
@@ -23,6 +24,11 @@
         <ContentControl 
             x:Name="MessageListContainer" 
             Grid.Column="1"
+        />
+
+        <ContentControl
+            x:Name="MessageContentContainer"
+            Grid.Column="2"
         />
 
     </Grid>

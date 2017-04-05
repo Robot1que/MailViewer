@@ -9,6 +9,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    x:Name="RootElement"
 >
 
     <UserControl.Resources>
@@ -20,10 +21,10 @@
                 NullString="(No subject)"
             />
 
-            <DataTemplate x:Key="MessageTemplate">
+            <ControlTemplate x:Key="MessageTemplate" TargetType="Button">
                 <Grid>
 
-                    <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical" Padding="0,8">
 
                         <TextBlock
                             Text="{Binding Path=Sender.Name, Mode=OneTime}"
@@ -50,8 +51,20 @@
                         />
 
                     </StackPanel>
-                    
+
                 </Grid>
+            </ControlTemplate>
+
+            <DataTemplate x:Key="MessageItemTemplate">
+                <Button
+                    Template="{StaticResource MessageTemplate}"
+                    Command="{Binding 
+                        ElementName=RootElement, 
+                        Path=DataContext.MessageOpenCommand, 
+                        Mode=OneTime
+                    }"
+                    CommandParameter="{Binding Path=Id, Mode=OneTime}"
+                />
             </DataTemplate>
             
         </ResourceDictionary>
@@ -67,7 +80,7 @@
         
             <ItemsControl 
                 ItemsSource="{Binding Path=Messages, Mode=OneTime}" 
-                ItemTemplate="{StaticResource MessageTemplate}"
+                ItemTemplate="{StaticResource MessageItemTemplate}"
             />
 
         </ScrollViewer>

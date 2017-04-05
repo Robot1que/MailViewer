@@ -24,11 +24,6 @@
 
     <Grid>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-
         <ScrollViewer 
             VerticalScrollMode="Auto"
             HorizontalScrollMode="Disabled"

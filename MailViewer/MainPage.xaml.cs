@@ -51,6 +51,7 @@ namespace Robot1que.MailViewer
         {
             this.FolderListContainer.Content = this._unityContainer.Resolve<Views.FolderListView>();
             this.MessageListContainer.Content = this._unityContainer.Resolve<Views.MessageListView>();
+            this.MessageContentContainer.Content = this._unityContainer.Resolve<Views.MessageContentView>();
         }
     }
 }
