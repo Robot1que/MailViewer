@@ -19,6 +19,8 @@ namespace Robot1que.MailViewer.Models
 
         public ImmutableArray<MailFolder> ChildFolders { get; private set; }
 
+        public int? UnreadItemCount { get; private set; }
+
         private MailFolder()
         {
 
@@ -32,7 +34,8 @@ namespace Robot1que.MailViewer.Models
                     Id = data.Id,
                     ParentFolderId = data.ParentFolderId,
                     DisplayName = data.DisplayName,
-                    ChildFolders = data.ChildFolders.ToImmutableArray(item => MailFolder.FromData(item))
+                    ChildFolders = data.ChildFolders.ToImmutableArray(item => MailFolder.FromData(item)),
+                    UnreadItemCount = data.UnreadItemCount
                 };
         }
     }

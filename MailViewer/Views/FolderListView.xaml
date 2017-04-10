@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Robot1que.MailViewer.Views"
     xmlns:controls="using:Robot1que.MailViewer.Controls"
+    xmlns:converters="using:Robot1que.MailViewer.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -15,8 +16,51 @@
     <UserControl.Resources>
         <ResourceDictionary>
 
+            <converters:NumberToVisibilityConverter x:Key="NumberToVisibilityConverter" />
+            <converters:NumberCapConverter x:Key="NumberCapConverter" />
+
             <DataTemplate x:Name="MailFolderTreeItemTemplate">
-                <TextBlock Text="{Binding Path=Data.DisplayName, Mode=OneTime}" />
+                <Grid>
+                    
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="{Binding Path=Data.DisplayName, Mode=OneTime}"
+                    />
+
+                    <Border 
+                        Grid.Column="1"
+                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                        VerticalAlignment="Center"
+                        Width="24"
+                        Height="24"
+                        Visibility="{Binding 
+                            Path=Data.UnreadItemCount, 
+                            Mode=OneTime, 
+                            Converter={StaticResource NumberToVisibilityConverter}
+                        }"
+                        Margin="12,0"
+                    >
+                        <TextBlock 
+                            Text="{Binding 
+                                Path=Data.UnreadItemCount, 
+                                Mode=OneTime,
+                                Converter={StaticResource NumberCapConverter}
+                            }"
+                            FontSize="9"
+                            Margin="4"
+                            Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            FontWeight="Normal"
+                        />
+                    </Border>
+
+                </Grid>
             </DataTemplate>
 
         </ResourceDictionary>
