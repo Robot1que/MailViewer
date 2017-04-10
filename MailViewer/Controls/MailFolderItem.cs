@@ -46,13 +46,31 @@ namespace Robot1que.MailViewer.Controls
                     nameof(MailFolderItem.IsSelected),
                     typeof(bool),
                     typeof(MailFolderItem),
-                    new PropertyMetadata(false)
+                    new PropertyMetadata(false, MailFolderItem.IsSelected_Changed)
                 );
         }
 
         public MailFolderItem()
         {
             this.DefaultStyleKey = typeof(MailFolderItem);
+        }
+
+        private static void IsSelected_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mailFolderItem = (MailFolderItem)d;
+            mailFolderItem.VisualStateUpdate();
+        }
+
+        private void VisualStateUpdate()
+        {
+            if (this.IsSelected)
+            {
+                VisualStateManager.GoToState(this, "Selected", true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "Unselected", true);
+            }
         }
     }
 }

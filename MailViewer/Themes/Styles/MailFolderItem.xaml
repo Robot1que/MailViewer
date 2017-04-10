@@ -12,6 +12,7 @@
         <Grid x:Name="RootPanel" Background="Transparent">
 
             <VisualStateManager.VisualStateGroups>
+                
                 <VisualStateGroup x:Name="CommonStates">
                     
                     <VisualState x:Name="Normal" />
@@ -41,6 +42,23 @@
                     <VisualState x:Name="Disabled" />
                     
                 </VisualStateGroup>
+
+                <VisualStateGroup x:Name="SelectionState">
+
+                    <VisualState x:Name="Unselected" />
+
+                    <VisualState x:Name="Selected">
+                        <VisualState.Setters>
+                            <Setter Target="Content.FontWeight" Value="SemiBold" />
+                            <Setter
+                                Target="Content.Foreground" 
+                                Value="{ThemeResource SystemControlForegroundAccentBrush}" 
+                            />
+                        </VisualState.Setters>
+                    </VisualState>
+
+                </VisualStateGroup>
+                
             </VisualStateManager.VisualStateGroups>
             
             <!--Expander button-->
