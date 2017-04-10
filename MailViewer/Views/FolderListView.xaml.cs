@@ -64,6 +64,7 @@ namespace Robot1que.MailViewer.Views
                 var viewModel = (FolderListViewModel)sender;
                 this.ItemsSource = 
                     viewModel.MailFolders
+                        .OrderBy(item => item.DisplayName, new FolderSortComparer())
                         .Select(item => new TreeViewItemData(item, (x) => x.ChildFolders))
                         .SelectMany(item => new TreeViewItemData[] { item }.Concat(item.Children))
                         .ToImmutableArray();
@@ -80,6 +81,33 @@ namespace Robot1que.MailViewer.Views
             var mailFolderTree = (MailFolderTree)sender;
             var treeViewItemData = (TreeViewItemData)mailFolderTree.SelectedItem.DataContext;
             this._viewModel.MailFolderSelect(treeViewItemData.Data.Id);
+        }
+    }
+
+    public class FolderSortComparer : IComparer<string>
+    {
+        private static readonly string[] Preceding =
+            { "Inbox", "Junk Email", "Drafts", "Sent Items", "Deleted Items" };
+
+        private static readonly string[] Following = { "Archive" };
+
+        public int Compare(string x, string y)
+        {
+            var xScore = this.KeyGet(x);
+            var yScore = this.KeyGet(y);
+            return xScore.CompareTo(yScore);
+        }
+
+        private int KeyGet(string value)
+        {
+            var key = Array.IndexOf(FolderSortComparer.Preceding, value);
+            if (key == -1)
+            {
+                key = 
+                    FolderSortComparer.Preceding.Length +
+                    Array.IndexOf(FolderSortComparer.Following, value) + 1;
+            }
+            return key;
         }
     }
 }

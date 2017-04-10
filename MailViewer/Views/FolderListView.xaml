@@ -30,6 +30,7 @@
         >
 
             <controls:MailFolderTree
+                x:Name="MailFolderTree"
                 ItemsSource="{x:Bind Path=ItemsSource, Mode=OneWay}"
                 ItemTemplate="{StaticResource MailFolderTreeItemTemplate}"
                 SelectedItemChanged="MailFolderTree_SelectedItemChanged"

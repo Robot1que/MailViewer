@@ -60,7 +60,7 @@ namespace Robot1que.MailViewer.ViewModels
 
                 request = folders.NextPageRequest;
             }
-
+            
             this.MailFolders = dataItems.Select(item => MailFolder.FromData(item)).ToImmutableArray();
         }
 
