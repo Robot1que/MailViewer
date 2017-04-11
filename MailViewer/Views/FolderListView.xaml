@@ -102,7 +102,7 @@
                 ItemsSource="{x:Bind Path=ItemsSource, Mode=OneWay}"
                 ItemTemplate="{StaticResource MailFolderTreeItemTemplate}"
                 SelectedItemChanged="MailFolderTree_SelectedItemChanged"
-                ItemPadding="24,12,12,12"
+                ItemPadding="24,0,12,0"
             >
                 <!--<ItemsControl.ItemContainerTransitions>
                     <TransitionCollection>

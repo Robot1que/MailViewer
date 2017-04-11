@@ -99,7 +99,6 @@
     <Compile Include="AuthenticationService.cs" />
     <Compile Include="Controls\MailFolderItem.cs" />
     <Compile Include="Controls\MailFolderTree.cs" />
-    <Compile Include="Controls\TreeViewItemData.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Converters\EnumToVisibilityConverter.cs" />

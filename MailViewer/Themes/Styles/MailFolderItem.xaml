@@ -70,6 +70,8 @@
                 x:Name="Content"
                 Margin="{TemplateBinding Padding}"
                 Content="{TemplateBinding Content}"
+                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
             />
 
         </Grid>
@@ -78,6 +80,9 @@
     <Style TargetType="controls:MailFolderItem">
         <Setter Property="Template" Value="{StaticResource MailFolderItemTemplate}"/>
         <Setter Property="ClickMode" Value="Press" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Height" Value="44" />
     </Style>
 
 </ResourceDictionary>

@@ -40,8 +40,6 @@ namespace Robot1que.MailViewer.ViewModels
 
             this._navigationService =
                 navigationService ?? throw new ArgumentNullException(nameof(navigationService));
-
-
         }
 
         public async Task Initialize()

@@ -22,18 +22,18 @@ using Robot1que.MailViewer.Controls;
 
 namespace Robot1que.MailViewer.Views
 {
-    using TreeViewItemData = TreeViewItemData<MailFolder>;
-
     public sealed partial class FolderListView : UserControl
     {
         public static readonly DependencyProperty ItemsSourceProperty;
         public static readonly DependencyProperty IsUnreadFilterEnabledProperty;
 
         private readonly FolderListViewModel _viewModel;
+        private readonly Dictionary<MailFolder, int> _mailFolderNestingInfo = 
+            new Dictionary<MailFolder, int>();
 
-        public ImmutableArray<TreeViewItemData> ItemsSource
+        public ImmutableArray<MailFolder> ItemsSource
         {
-            get => (ImmutableArray<TreeViewItemData>)this.GetValue(FolderListView.ItemsSourceProperty);
+            get => (ImmutableArray<MailFolder>)this.GetValue(FolderListView.ItemsSourceProperty);
             set => this.SetValue(FolderListView.ItemsSourceProperty, value);
         }
 
@@ -48,9 +48,9 @@ namespace Robot1que.MailViewer.Views
             FolderListView.ItemsSourceProperty =
                 DependencyProperty.Register(
                     nameof(FolderListView.ItemsSource),
-                    typeof(ImmutableArray<TreeViewItemData>),
+                    typeof(ImmutableArray<MailFolder>),
                     typeof(FolderListView),
-                    new PropertyMetadata(ImmutableArray<TreeViewItemData>.Empty)
+                    new PropertyMetadata(ImmutableArray<MailFolder>.Empty)
                 );
 
             FolderListView.IsUnreadFilterEnabledProperty =
@@ -70,6 +70,8 @@ namespace Robot1que.MailViewer.Views
 
             this.DataContext = viewModel;
             this.InitializeComponent();
+
+            this.MailFolderTree.ItemNestingLevelProvider = this.MailFolderNestingLevelGet;
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -77,13 +79,33 @@ namespace Robot1que.MailViewer.Views
             if (e.PropertyName == nameof(FolderListViewModel.MailFolders))
             {
                 var viewModel = (FolderListViewModel)sender;
-                this.ItemsSource = 
-                    viewModel.MailFolders
-                        .OrderBy(item => item.DisplayName, new FolderSortComparer())
-                        .Select(item => new TreeViewItemData(item, (x) => x.ChildFolders))
-                        .SelectMany(item => new TreeViewItemData[] { item }.Concat(item.Children))
-                        .ToImmutableArray();
+
+                this._mailFolderNestingInfo.Clear();
+                this.MailFoldersFlatten(
+                    viewModel.MailFolders.OrderBy(item => item.DisplayName, new FolderSortComparer()), 
+                    this._mailFolderNestingInfo
+                );
+
+                this.ItemsSource = this._mailFolderNestingInfo.Keys.ToImmutableArray();
             }
+        }
+
+        private void MailFoldersFlatten(
+            IEnumerable<MailFolder> items,
+            Dictionary<MailFolder, int> itemNestingInfo,
+            int nestingLevel = 0)
+        {
+            foreach (var item in items)
+            {
+                itemNestingInfo.Add(item, nestingLevel);
+                this.MailFoldersFlatten(item.ChildFolders, itemNestingInfo, nestingLevel + 1);
+            }
+        }
+
+        private int MailFolderNestingLevelGet(object item)
+        {
+            var mailFolder = (MailFolder)item;
+            return this._mailFolderNestingInfo[mailFolder];
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -94,8 +116,8 @@ namespace Robot1que.MailViewer.Views
         private void MailFolderTree_SelectedItemChanged(object sender, EventArgs e)
         {
             var mailFolderTree = (MailFolderTree)sender;
-            var treeViewItemData = (TreeViewItemData)mailFolderTree.SelectedItem.DataContext;
-            this._viewModel.MailFolderSelect(treeViewItemData.Data.Id);
+            var mailFolder = (MailFolder)mailFolderTree.SelectedItem.DataContext;
+            this._viewModel.MailFolderSelect(mailFolder.Id);
         }
 
         private void UnreadFilterEnable(bool isEnabled)
@@ -108,10 +130,10 @@ namespace Robot1que.MailViewer.Views
 
         private bool UnreadMailFolderFilter(object item)
         {
-            var mailFolder = ((TreeViewItemData<MailFolder>)item).Data;
-            return (mailFolder.UnreadItemCount ?? 0) > 0;
-                //(mailFolder.UnreadItemCount ?? 0) > 0 ||
-                //mailFolder.ChildFolders.Any(child => this.UnreadMailFolderFilter(child));
+            var mailFolder = (MailFolder)item;
+            return
+                (mailFolder.UnreadItemCount ?? 0) > 0 ||
+                mailFolder.ChildFolders.Any(child => this.UnreadMailFolderFilter(child));
         }
 
         private static void IsUnreadFilterEnabled_Changed(

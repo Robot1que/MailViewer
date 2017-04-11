@@ -17,6 +17,8 @@ namespace Robot1que.MailViewer.Controls
 
         public Func<object, bool> Filter { get; set; } = null;
 
+        public Func<object, int> ItemNestingLevelProvider { get; set; } = null;
+
         public Thickness ItemPadding
         {
             get => (Thickness)this.GetValue(MailFolderTree.ItemPaddingProperty);
@@ -73,17 +75,18 @@ namespace Robot1que.MailViewer.Controls
         {
             base.PrepareContainerForItemOverride(element, item);
 
-            var container = (ContentControl)element;
-            var mailFolderItemData = (ITreeViewItemData)item;
-
-            container.Content = mailFolderItemData.Data;
-
-            this.ItemPaddingSet(container, mailFolderItemData.NestingLevel);
+            var container = (Control)element;
+            this.ContainerPaddingSet(container, item);
         }
 
-        private void ItemPaddingSet(Control control, int nestingLevel)
+        private void ContainerPaddingSet(Control container, object item)
         {
-            control.Padding =
+            var nestingLevel = 
+                this.ItemNestingLevelProvider != null ? 
+                    this.ItemNestingLevelProvider.Invoke(item) : 
+                    0;
+
+            container.Padding =
                 new Thickness(
                     this.ItemPadding.Left + this.ItemPadding.Left * nestingLevel,
                     this.ItemPadding.Top,
@@ -92,21 +95,19 @@ namespace Robot1que.MailViewer.Controls
                 );
         }
 
-        private void ItemPaddingUpdate()
+        private void ContainerPaddingUpdate()
         {
             foreach (var item in this.Items)
             {
                 var container = (Control)this.ContainerFromItem(item);
-                var treeViewItemData = (ITreeViewItemData)item;
-
-                this.ItemPaddingSet(container, treeViewItemData.NestingLevel);
+                this.ContainerPaddingSet(container, item);
             }
         }
 
         private static void ItemPadding_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mailFolderTree = (MailFolderTree)d;
-            mailFolderTree.ItemPaddingUpdate();
+            mailFolderTree.ContainerPaddingUpdate();
         }
 
         private void OnSelectedItemChanged(EventArgs args)
