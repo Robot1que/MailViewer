@@ -108,8 +108,10 @@ namespace Robot1que.MailViewer.Views
 
         private bool UnreadMailFolderFilter(object item)
         {
-            var mailFolder = (TreeViewItemData)item;
-            return (mailFolder.Data.UnreadItemCount ?? 0) > 0;
+            var mailFolder = ((TreeViewItemData<MailFolder>)item).Data;
+            return (mailFolder.UnreadItemCount ?? 0) > 0;
+                //(mailFolder.UnreadItemCount ?? 0) > 0 ||
+                //mailFolder.ChildFolders.Any(child => this.UnreadMailFolderFilter(child));
         }
 
         private static void IsUnreadFilterEnabled_Changed(

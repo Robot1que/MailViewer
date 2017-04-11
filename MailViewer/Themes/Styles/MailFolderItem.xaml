@@ -7,18 +7,11 @@
 
     <converters:IndentationToPaddingConverter x:Key="IndentationToPaddingConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-
-    <Thickness x:Key="MailFolderItemContentPadding">24,12,12,12</Thickness>
-
+    
     <ControlTemplate x:Key="MailFolderItemTemplate" TargetType="controls:MailFolderItem">
         <Grid 
             x:Name="RootPanel" 
             Background="Transparent"
-            Visibility="{Binding 
-                Path=IsVisible, 
-                Mode=OneWay, 
-                Converter={StaticResource BooleanToVisibilityConverter}
-            }"
         >
 
             <VisualStateManager.VisualStateGroups>
@@ -73,21 +66,11 @@
             
             <!--Expander button-->
 
-            <Border
-                Padding="{Binding 
-                    Path=NestingLevel, 
-                    Mode=OneTime, 
-                    Converter={StaticResource IndentationToPaddingConverter},
-                    ConverterParameter={StaticResource MailFolderItemContentPadding}
-                }"
-            >
-
-                <ContentPresenter
-                    x:Name="Content"
-                    Content="{TemplateBinding Content}"
-                />
-
-            </Border>
+            <ContentPresenter
+                x:Name="Content"
+                Margin="{TemplateBinding Padding}"
+                Content="{TemplateBinding Content}"
+            />
 
         </Grid>
     </ControlTemplate>

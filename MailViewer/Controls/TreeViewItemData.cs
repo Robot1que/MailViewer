@@ -10,11 +10,18 @@ using Robot1que.MailViewer.Extensions;
 
 namespace Robot1que.MailViewer.Controls
 {
-    public class TreeViewItemData<T>
+    public interface ITreeViewItemData
     {
-        public bool IsVisible { get; set; } = true;
+        int NestingLevel { get; }
 
+        object Data { get; }
+    }
+
+    public class TreeViewItemData<T> : ITreeViewItemData
+    {
         public int NestingLevel { get; }
+
+        object ITreeViewItemData.Data => this.Data;
 
         public T Data { get; }
 

@@ -16,6 +16,7 @@ namespace Robot1que.MailViewer.Controls
     {
         public static readonly DependencyProperty IsSelectedProperty;
         public static readonly DependencyProperty IsExpandedProperty;
+        public static readonly DependencyProperty NestingLevelProperty;
 
         public bool IsSelected
         {
@@ -27,6 +28,12 @@ namespace Robot1que.MailViewer.Controls
         {
             get => (bool)this.GetValue(MailFolderItem.IsExpandedProperty);
             set => this.SetValue(MailFolderItem.IsExpandedProperty, value);
+        }
+
+        public int NestingLevel
+        {
+            get => (int)this.GetValue(MailFolderItem.NestingLevelProperty);
+            set => this.SetValue(MailFolderItem.NestingLevelProperty, value);
         }
 
         static MailFolderItem()
@@ -45,6 +52,14 @@ namespace Robot1que.MailViewer.Controls
                     typeof(bool),
                     typeof(MailFolderItem),
                     new PropertyMetadata(false, MailFolderItem.IsSelected_Changed)
+                );
+
+            MailFolderItem.NestingLevelProperty =
+                DependencyProperty.Register(
+                    nameof(MailFolderItem.NestingLevel),
+                    typeof(int),
+                    typeof(MailFolderItem),
+                    new PropertyMetadata(0)
                 );
         }
 

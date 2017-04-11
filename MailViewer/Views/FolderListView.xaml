@@ -20,7 +20,7 @@
             <converters:NumberCapConverter x:Key="NumberCapConverter" />
 
             <DataTemplate x:Name="MailFolderTreeItemTemplate">
-                <Grid DataContext="{Binding Path=Data, Mode=OneTime}">
+                <Grid>
                     
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -102,6 +102,7 @@
                 ItemsSource="{x:Bind Path=ItemsSource, Mode=OneWay}"
                 ItemTemplate="{StaticResource MailFolderTreeItemTemplate}"
                 SelectedItemChanged="MailFolderTree_SelectedItemChanged"
+                ItemPadding="24,12,12,12"
             >
                 <!--<ItemsControl.ItemContainerTransitions>
                     <TransitionCollection>
