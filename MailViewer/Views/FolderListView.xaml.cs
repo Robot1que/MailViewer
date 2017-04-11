@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -14,11 +13,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+using System.Collections.Immutable;
+using System.ComponentModel;
+
 using Robot1que.MailViewer.ViewModels;
 using Robot1que.MailViewer.Models;
 using Robot1que.MailViewer.Controls;
-using System.Collections.Immutable;
-using System.ComponentModel;
 
 namespace Robot1que.MailViewer.Views
 {
@@ -27,6 +27,7 @@ namespace Robot1que.MailViewer.Views
     public sealed partial class FolderListView : UserControl
     {
         public static readonly DependencyProperty ItemsSourceProperty;
+        public static readonly DependencyProperty IsUnreadFilterEnabledProperty;
 
         private readonly FolderListViewModel _viewModel;
 
@@ -34,6 +35,12 @@ namespace Robot1que.MailViewer.Views
         {
             get => (ImmutableArray<TreeViewItemData>)this.GetValue(FolderListView.ItemsSourceProperty);
             set => this.SetValue(FolderListView.ItemsSourceProperty, value);
+        }
+
+        public bool IsUnreadFilterEnabled
+        {
+            get => (bool)this.GetValue(FolderListView.IsUnreadFilterEnabledProperty);
+            set => this.SetValue(FolderListView.IsUnreadFilterEnabledProperty, value);
         }
 
         static FolderListView()
@@ -44,6 +51,14 @@ namespace Robot1que.MailViewer.Views
                     typeof(ImmutableArray<TreeViewItemData>),
                     typeof(FolderListView),
                     new PropertyMetadata(ImmutableArray<TreeViewItemData>.Empty)
+                );
+
+            FolderListView.IsUnreadFilterEnabledProperty =
+                DependencyProperty.Register(
+                    nameof(FolderListView.IsUnreadFilterEnabled),
+                    typeof(bool),
+                    typeof(FolderListView),
+                    new PropertyMetadata(false, FolderListView.IsUnreadFilterEnabled_Changed)
                 );
         }
 
@@ -81,6 +96,28 @@ namespace Robot1que.MailViewer.Views
             var mailFolderTree = (MailFolderTree)sender;
             var treeViewItemData = (TreeViewItemData)mailFolderTree.SelectedItem.DataContext;
             this._viewModel.MailFolderSelect(treeViewItemData.Data.Id);
+        }
+
+        private void UnreadFilterEnable(bool isEnabled)
+        {
+            this.MailFolderTree.Filter = 
+                isEnabled ? (Func<object, bool>)this.UnreadMailFolderFilter : null;
+
+            this.MailFolderTree.DataViewUpdate();
+        }
+
+        private bool UnreadMailFolderFilter(object item)
+        {
+            var mailFolder = (TreeViewItemData)item;
+            return (mailFolder.Data.UnreadItemCount ?? 0) > 0;
+        }
+
+        private static void IsUnreadFilterEnabled_Changed(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            var folderListView = (FolderListView)d;
+            folderListView.UnreadFilterEnable((bool)e.NewValue);
         }
     }
 

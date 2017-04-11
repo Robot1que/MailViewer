@@ -20,7 +20,7 @@
             <converters:NumberCapConverter x:Key="NumberCapConverter" />
 
             <DataTemplate x:Name="MailFolderTreeItemTemplate">
-                <Grid>
+                <Grid DataContext="{Binding Path=Data, Mode=OneTime}">
                     
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -29,7 +29,7 @@
                     
                     <TextBlock
                         Grid.Column="0"
-                        Text="{Binding Path=Data.DisplayName, Mode=OneTime}"
+                        Text="{Binding Path=DisplayName, Mode=OneTime}"
                     />
 
                     <Border 
@@ -39,7 +39,7 @@
                         Width="24"
                         Height="24"
                         Visibility="{Binding 
-                            Path=Data.UnreadItemCount, 
+                            Path=UnreadItemCount, 
                             Mode=OneTime, 
                             Converter={StaticResource NumberToVisibilityConverter}
                         }"
@@ -47,7 +47,7 @@
                     >
                         <TextBlock 
                             Text="{Binding 
-                                Path=Data.UnreadItemCount, 
+                                Path=UnreadItemCount, 
                                 Mode=OneTime,
                                 Converter={StaticResource NumberCapConverter}
                             }"
@@ -68,7 +68,31 @@
 
     <Grid>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel 
+            Grid.Row="0"
+            Orientation="Vertical"
+        >
+            
+            <!--<Button
+                Content="Refresh"
+                Command="{Binding Path=}"
+            />-->
+
+            <ToggleButton
+                Content="Show unread only"
+                IsChecked="{x:Bind Path=IsUnreadFilterEnabled, Mode=TwoWay}"
+                HorizontalAlignment="Stretch"
+            />
+
+        </StackPanel>
+
         <ScrollViewer 
+            Grid.Row="1"
             VerticalScrollMode="Auto"
             HorizontalScrollMode="Disabled"
         >
@@ -79,11 +103,11 @@
                 ItemTemplate="{StaticResource MailFolderTreeItemTemplate}"
                 SelectedItemChanged="MailFolderTree_SelectedItemChanged"
             >
-                <ItemsControl.ItemContainerTransitions>
+                <!--<ItemsControl.ItemContainerTransitions>
                     <TransitionCollection>
                         <ContentThemeTransition />
                     </TransitionCollection>
-                </ItemsControl.ItemContainerTransitions>
+                </ItemsControl.ItemContainerTransitions>-->
             </controls:MailFolderTree>
 
         </ScrollViewer>

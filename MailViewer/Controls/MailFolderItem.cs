@@ -29,8 +29,6 @@ namespace Robot1que.MailViewer.Controls
             set => this.SetValue(MailFolderItem.IsExpandedProperty, value);
         }
 
-        public int NestingLevel { get; }
-
         static MailFolderItem()
         {
             MailFolderItem.IsExpandedProperty =

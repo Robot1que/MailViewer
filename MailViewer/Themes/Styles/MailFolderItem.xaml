@@ -6,10 +6,20 @@
 >
 
     <converters:IndentationToPaddingConverter x:Key="IndentationToPaddingConverter" />
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
     <Thickness x:Key="MailFolderItemContentPadding">24,12,12,12</Thickness>
 
     <ControlTemplate x:Key="MailFolderItemTemplate" TargetType="controls:MailFolderItem">
-        <Grid x:Name="RootPanel" Background="Transparent">
+        <Grid 
+            x:Name="RootPanel" 
+            Background="Transparent"
+            Visibility="{Binding 
+                Path=IsVisible, 
+                Mode=OneWay, 
+                Converter={StaticResource BooleanToVisibilityConverter}
+            }"
+        >
 
             <VisualStateManager.VisualStateGroups>
                 

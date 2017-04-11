@@ -12,6 +12,8 @@ namespace Robot1que.MailViewer.Controls
     {
         public MailFolderItem SelectedItem { get; private set; } = null;
 
+        public Func<object, bool> Filter { get; set; } = null;
+
         public event EventHandler SelectedItemChanged;
 
         public MailFolderTree()
@@ -25,6 +27,32 @@ namespace Robot1que.MailViewer.Controls
             mailFolderItem.Click += this.MailFolderItem_Click;
             return mailFolderItem;
         }
+
+        public void DataViewUpdate()
+        {
+            Func<object, Visibility> visibilityGetter;
+
+            if (this.Filter != null)
+            {
+                visibilityGetter = 
+                    (item) => this.Filter.Invoke(item) ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                visibilityGetter = (item) => Visibility.Visible;
+            }
+            
+            foreach (var item in this.Items)
+            {
+                var element = (UIElement)this.ContainerFromItem(item);
+                element.Visibility = visibilityGetter.Invoke(item);
+            }
+        }
+
+        //protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        //{
+        //    base.PrepareContainerForItemOverride(element, item);
+        //}
 
         private void OnSelectedItemChanged(EventArgs args)
         {

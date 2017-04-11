@@ -12,6 +12,8 @@ namespace Robot1que.MailViewer.Controls
 {
     public class TreeViewItemData<T>
     {
+        public bool IsVisible { get; set; } = true;
+
         public int NestingLevel { get; }
 
         public T Data { get; }
