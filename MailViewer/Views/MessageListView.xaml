@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Robot1que.MailViewer.Views"
     xmlns:converters="using:Robot1que.MailViewer.Converters"
+    xmlns:models="using:Robot1que.MailViewer.Models"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:icore="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -20,31 +23,39 @@
                 x:Key="NullToStringConverter" 
                 NullString="(No subject)"
             />
+            <converters:BooleanToVisibilityConverter 
+                x:Key="InvertedBooleanToVisibilityConverter" 
+                IsInverted="True" />
 
-            <ControlTemplate x:Key="MessageTemplate" TargetType="Button">
+            <DataTemplate x:Key="MessageItemTemplate" x:DataType="models:Message">
                 <Grid>
 
-                    <StackPanel Orientation="Vertical" Padding="0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel 
+                        Grid.Column="0"
+                        Orientation="Vertical" 
+                        Padding="0,8"
+                    >
 
                         <TextBlock
-                            Text="{Binding Path=Sender.Name, Mode=OneTime}"
+                            x:Name="Sender"
+                            Text="{x:Bind Sender.Name}"
                             TextTrimming="CharacterEllipsis"
                         />
+
                         <TextBlock
-                            Text="{Binding 
-                                Path=Subject, 
-                                Mode=OneTime, 
-                                Converter={StaticResource NullToStringConverter}
-                            }" 
+                            x:Name="Subject"
+                            Text="{x:Bind Subject, Converter={StaticResource NullToStringConverter}}" 
                             TextTrimming="CharacterEllipsis"
                             FontWeight="Light"
                         />
+
                         <TextBlock
-                            Text="{Binding 
-                                Path=ReceivedDateTime, 
-                                Mode=OneTime, 
-                                Converter={StaticResource DateTimeToStringConverter}
-                            }" 
+                            Text="{x:Bind ReceivedDateTime, Converter={StaticResource DateTimeToStringConverter}}" 
                             TextTrimming="CharacterEllipsis"
                             FontWeight="Light"
                             FontSize="8"
@@ -52,44 +63,39 @@
 
                     </StackPanel>
 
-                </Grid>
-            </ControlTemplate>
+                    <Border 
+                        Grid.Column="1"
+                        Visibility="{x:Bind IsRead, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
+                        Margin="12,0,0,0"
+                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                        VerticalAlignment="Center"
+                    >
+                        <TextBlock
+                            Text="New" 
+                            FontSize="9"
+                            Margin="4"
+                            Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"
+                        />
+                    </Border>
 
-            <DataTemplate x:Key="MessageItemTemplate">
-                <Button
-                    Template="{StaticResource MessageTemplate}"
-                    Command="{Binding 
-                        ElementName=RootElement, 
-                        Path=DataContext.MessageOpenCommand, 
-                        Mode=OneTime
-                    }"
-                    CommandParameter="{Binding Path=Id, Mode=OneTime}"
-                />
+                </Grid>
             </DataTemplate>
+
+            <Style x:Key="MessageItemContainerStyle" TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
             
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
 
-        <ScrollViewer 
-            Padding="12,0"
-            VerticalScrollBarVisibility="Auto"
-            HorizontalScrollBarVisibility="Disabled"
-        >
-
-            <ItemsControl 
-                ItemsSource="{Binding Path=Messages, Mode=OneTime}" 
-                ItemTemplate="{StaticResource MessageItemTemplate}"
-            >
-                <ItemsControl.ItemContainerTransitions>
-                    <TransitionCollection>
-                        <ContentThemeTransition />
-                    </TransitionCollection>
-                </ItemsControl.ItemContainerTransitions>
-            </ItemsControl>
-
-        </ScrollViewer>
+        <ListView 
+            ItemsSource="{x:Bind ViewModel.Messages}" 
+            ItemTemplate="{StaticResource MessageItemTemplate}"
+            SelectedItem="{x:Bind ViewModel.OpenedMessage, Mode=TwoWay}"
+            ItemContainerStyle="{StaticResource MessageItemContainerStyle}"
+        />
 
     </Grid>
     

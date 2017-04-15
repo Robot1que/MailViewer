@@ -10,12 +10,23 @@ namespace Robot1que.MailViewer.Converters
 {
     public class BooleanToVisibilityConverter : IValueConverter
     {
+        public bool IsInverted { get; set; } = false;
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return
-                (value is bool boolValue) ?
-                    (boolValue ? Visibility.Visible : Visibility.Collapsed) :
-                    value;
+            var result = value;
+
+            if (value is bool boolValue)
+            {
+                if (this.IsInverted)
+                {
+                    boolValue = !boolValue;
+                }
+
+                result = boolValue ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return result;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

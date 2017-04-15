@@ -101,6 +101,7 @@
     <Compile Include="Controls\MailFolderTree.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
+    <Compile Include="Converters\LoggingConverter.cs" />
     <Compile Include="Converters\EnumToVisibilityConverter.cs" />
     <Compile Include="Converters\IndentationToPaddingConverter.cs" />
     <Compile Include="Converters\NumberCapConverter.cs" />

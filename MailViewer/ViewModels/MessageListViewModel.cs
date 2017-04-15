@@ -12,16 +12,20 @@ using System.Windows.Input;
 
 namespace Robot1que.MailViewer.ViewModels
 {
-    public class MessageListViewModel : INotifyPropertyChanged
+    public class MessageListViewModel : ViewModelBase
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly INavigationService _navigationService;
 
+        private Message _openedMessage;
+
         public ObservableCollection<Message> Messages { get; } = new ObservableCollection<Message>();
 
-        public ICommand MessageOpenCommand { get; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        public Message OpenedMessage
+        {
+            get => this._openedMessage;
+            set => this.PropertySet(ref this._openedMessage, value);
+        }
 
         public MessageListViewModel(
             IAuthenticationService authenticationService, 
@@ -33,14 +37,9 @@ namespace Robot1que.MailViewer.ViewModels
             this._navigationService =
                 navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
-            this.MessageOpenCommand = new DelegateCommand<string>(this.MessageOpenCommand_Executed);
-
             this._navigationService.MailFolderOpenRequested += this.NavigationService_FolderOpenRequested;
-        }
 
-        private void OnPropertyChanged(PropertyChangedEventArgs args)
-        {
-            this.PropertyChanged?.Invoke(this, args);
+            this.PropertyChanged += this.MessageListViewModel_PropertyChanged;
         }
 
         private async void NavigationService_FolderOpenRequested(
@@ -61,11 +60,19 @@ namespace Robot1que.MailViewer.ViewModels
             }
         }
 
-        private void MessageOpenCommand_Executed(string messageId)
+        private void MessageListViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (messageId != null)
+            if (e.PropertyName == nameof(MessageListViewModel.OpenedMessage))
             {
-                this._navigationService.MessageOpen(messageId);
+                this.MessageOpen();
+            }
+        }
+
+        private void MessageOpen()
+        {
+            if (this.OpenedMessage != null)
+            {
+                this._navigationService.MessageOpen(this.OpenedMessage.Id);
             }
         }
     }

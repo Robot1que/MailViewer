@@ -21,9 +21,12 @@ namespace Robot1que.MailViewer.Views
 {
     public sealed partial class MessageListView : UserControl
     {
+        public MessageListViewModel ViewModel { get; }
+
         public MessageListView(MessageListViewModel viewModel)
         {
-            this.DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            this.ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            
             this.InitializeComponent();
         }
     }
