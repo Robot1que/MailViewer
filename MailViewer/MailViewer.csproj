@@ -124,10 +124,15 @@
     <Compile Include="Settings.cs" />
     <Compile Include="TimeService.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
+    <Compile Include="ViewModels\FilterViewModel.cs" />
     <Compile Include="ViewModels\FolderListViewModel.cs" />
+    <Compile Include="ViewModels\IDisplaySettings.cs" />
     <Compile Include="ViewModels\MessageContentViewModel.cs" />
     <Compile Include="ViewModels\MessageListViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\FilterView.xaml.cs">
+      <DependentUpon>FilterView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FolderListView.xaml.cs">
       <DependentUpon>FolderListView.xaml</DependentUpon>
     </Compile>
@@ -175,6 +180,10 @@
     <Page Include="Themes\Styles\MailFolderItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FilterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FolderListView.xaml">
       <Generator>MSBuild:Compile</Generator>

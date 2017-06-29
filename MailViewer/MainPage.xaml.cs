@@ -18,6 +18,7 @@ using Microsoft.Graph;
 using Microsoft.Practices.Unity;
 
 using Robot1que.MailViewer.Extensions;
+using Robot1que.MailViewer.ViewModels;
 
 namespace Robot1que.MailViewer
 {
@@ -43,12 +44,14 @@ namespace Robot1que.MailViewer
             unityContainer.RegisterTypeAsSingleton<ISettings, Settings>();
             unityContainer.RegisterTypeAsSingleton<IAuthenticationService, AuthenticationService>();
             unityContainer.RegisterTypeAsSingleton<INavigationService, NavigationService>();
+            unityContainer.RegisterTypeAsSingleton<IDisplaySettings, FilterViewModel>();
 
             return unityContainer;
         }
 
         private void Navigate()
         {
+            this.FilterContainer.Content = this._unityContainer.Resolve<Views.FilterView>();
             this.FolderListContainer.Content = this._unityContainer.Resolve<Views.FolderListView>();
             this.MessageListContainer.Content = this._unityContainer.Resolve<Views.MessageListView>();
             this.MessageContentContainer.Content = this._unityContainer.Resolve<Views.MessageContentView>();

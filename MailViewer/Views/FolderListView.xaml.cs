@@ -25,7 +25,6 @@ namespace Robot1que.MailViewer.Views
     public sealed partial class FolderListView : UserControl
     {
         public static readonly DependencyProperty ItemsSourceProperty;
-        public static readonly DependencyProperty IsUnreadFilterEnabledProperty;
 
         private readonly FolderListViewModel _viewModel;
         private readonly Dictionary<MailFolder, int> _mailFolderNestingInfo = 
@@ -36,13 +35,7 @@ namespace Robot1que.MailViewer.Views
             get => (ImmutableArray<MailFolder>)this.GetValue(FolderListView.ItemsSourceProperty);
             set => this.SetValue(FolderListView.ItemsSourceProperty, value);
         }
-
-        public bool IsUnreadFilterEnabled
-        {
-            get => (bool)this.GetValue(FolderListView.IsUnreadFilterEnabledProperty);
-            set => this.SetValue(FolderListView.IsUnreadFilterEnabledProperty, value);
-        }
-
+        
         static FolderListView()
         {
             FolderListView.ItemsSourceProperty =
@@ -52,21 +45,20 @@ namespace Robot1que.MailViewer.Views
                     typeof(FolderListView),
                     new PropertyMetadata(ImmutableArray<MailFolder>.Empty)
                 );
-
-            FolderListView.IsUnreadFilterEnabledProperty =
-                DependencyProperty.Register(
-                    nameof(FolderListView.IsUnreadFilterEnabled),
-                    typeof(bool),
-                    typeof(FolderListView),
-                    new PropertyMetadata(false, FolderListView.IsUnreadFilterEnabled_Changed)
-                );
         }
 
-        public FolderListView(FolderListViewModel viewModel)
+        public FolderListView(FolderListViewModel viewModel, IDisplaySettings displaySettings)
         {
+            if (displaySettings == null)
+            {
+                throw new ArgumentNullException(nameof(displaySettings));
+            }
+
             this._viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
             this._viewModel.PropertyChanged += this.ViewModel_PropertyChanged;
+            displaySettings.IsShowUnreadOnlyEnabledChanged += 
+                this.DisplaySettings_IsShowUnreadOnlyEnabledChanged;
 
             this.DataContext = viewModel;
             this.InitializeComponent();
@@ -128,20 +120,18 @@ namespace Robot1que.MailViewer.Views
             this.MailFolderTree.DataViewUpdate();
         }
 
+        private void DisplaySettings_IsShowUnreadOnlyEnabledChanged(object sender, EventArgs e)
+        {
+            var displaySettings = (IDisplaySettings)sender;
+            this.UnreadFilterEnable(displaySettings.IsShowUnreadOnlyEnabled);
+        }
+
         private bool UnreadMailFolderFilter(object item)
         {
             var mailFolder = (MailFolder)item;
             return
                 (mailFolder.UnreadItemCount ?? 0) > 0 ||
                 mailFolder.ChildFolders.Any(child => this.UnreadMailFolderFilter(child));
-        }
-
-        private static void IsUnreadFilterEnabled_Changed(
-            DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
-        {
-            var folderListView = (FolderListView)d;
-            folderListView.UnreadFilterEnable((bool)e.NewValue);
         }
     }
 

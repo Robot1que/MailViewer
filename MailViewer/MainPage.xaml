@@ -16,12 +16,31 @@
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
 
-
         <Border
             Grid.Column="0"
             Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
         >
-            <ContentControl x:Name="FolderListContainer" />
+
+            <Grid>
+                
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <ContentControl 
+                    Grid.Row="0"
+                    x:Name="FilterContainer" 
+                />
+
+                <ContentControl 
+                    Grid.Row="1"
+                    x:Name="FolderListContainer" 
+                />
+                
+            </Grid>
+            
         </Border>
 
         <Border
